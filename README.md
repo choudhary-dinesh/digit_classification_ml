@@ -1,9 +1,9 @@
 how to satup:
 
-install conda
-conda create -n digit python==3.9
-source activate digit
-pip install -r requirements.txt
+#1 install conda
+#2 conda create -n digit python==3.9
+#3 source activate digit
+#4 pip install -r requirements.txt
 
-how to run
-python exp.py
+how to run:
+#1python exp.py
