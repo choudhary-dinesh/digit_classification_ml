@@ -75,10 +75,8 @@ def get_list_of_param_comination(list_of_param, param_names):
 def tune_hparams(X_train, y_train, X_dev, y_dev, list_of_all_param_combination):
     best_accuracy = -1
     for hparams in list_of_all_param_combination:
-        print(f"trainin svm for {hparams}")
         model = train_model(X_train=X_train, y_train=y_train, model_params=hparams, model_type='svm')
         val_accuracy, _ = predict_and_eval(model, X_dev, y_dev)
-        print('validation accuracy :  ', val_accuracy)
         if val_accuracy > best_accuracy:
             best_hparams = hparams
             best_model = model
