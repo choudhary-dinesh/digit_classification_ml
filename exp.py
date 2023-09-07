@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from sklearn import metrics
 
 #utils import
-from utils import load_dataset, data_preprocessing, train_model
+from utils import load_dataset, data_preprocessing, train_model, get_list_of_param_comination, tune_hparams
 from utils import split_train_dev_test, predict_and_eval, visualize_first_n_sample_prediction, get_classification_report
 
 
@@ -42,37 +42,27 @@ X_dev =data_preprocessing(X_dev)
 #5. Classification model training
 #tuning model for gamma value 
 gamma_values = [0.0005, 0.001, 0.002, 0.005, 0.010]
-model_list = []
-for i, gv in enumerate(gamma_values):
-    print(f"trainin svm for gamma {gv}")
-    model = train_model(X_train=X_train, y_train=y_train, model_params={'gamma':gv}, model_type='svm')
-    val_accuracy, _ = predict_and_eval(model, X_dev, y_dev)
-    print('validation accuracy :  ', val_accuracy)
-    model_list.append({'gamma':gv, "model" : model, "val_accuracy" : val_accuracy})
+C_values = [0.1, 0.2, 0.5, 0.75, 1]
+list_of_param_comination = get_list_of_param_comination([gamma_values, C_values],  ['gamma', 'C'])
 
-# print(model_list)
+best_hparams, best_model, best_accuracy = tune_hparams(X_train, y_train, X_dev, y_dev, list_of_param_comination)
 
-#find best model
-best_model = model_list[0]
-for each_model in model_list[1:]:
-    if each_model['val_accuracy'] > best_model['val_accuracy']:
-        best_model = each_model    
-print(f"best model is with gamma value of {best_model['gamma']} whose validation accuracy is {best_model['val_accuracy']}")
+print(best_hparams, best_model, best_accuracy)
 
 
 
 ################################################################################################
 #6. Prediction and evaluation on test sat
 # test accuracy
-test_accuracy, y_pred = predict_and_eval(best_model['model'], X_test, y_test)
+test_accuracy, y_pred = predict_and_eval(best_model, X_test, y_test)
 print("accuracy of model on test sat is ", test_accuracy)
 
 # Below we visualize the first 4 test samples and show their predicted
-visualize_first_n_sample_prediction(X_test, y_pred, n = 4)
+# visualize_first_n_sample_prediction(X_test, y_pred, n = 4)
 
 #print classification report
 classification_report = get_classification_report(y_test, y_pred)
-print(f"Classification report for classifier {best_model['model']}")
+print(f"Classification report for classifier {best_model}")
 print(classification_report)
 
 
@@ -80,9 +70,9 @@ print(classification_report)
 # true digit values and the predicted digit values.
 
 disp = metrics.ConfusionMatrixDisplay.from_predictions(y_test, y_pred)
-disp.figure_.suptitle("Confusion Matrix")
-print(f"Confusion matrix:\n{disp.confusion_matrix}")
-plt.show()
+# disp.figure_.suptitle("Confusion Matrix")
+# print(f"Confusion matrix:\n{disp.confusion_matrix}")
+# plt.show()
 
 
 

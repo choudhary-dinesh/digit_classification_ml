@@ -2,6 +2,7 @@
 from sklearn.model_selection import train_test_split
 from sklearn import datasets, svm, metrics
 import matplotlib.pyplot as plt
+from itertools import product
 
 #load dataset from sklearn
 def load_dataset():
@@ -56,3 +57,30 @@ def visualize_first_n_sample_prediction(X_test, y_pred, n = 4):
 #return classification report
 def get_classification_report(y_test, y_pred):
     return metrics.classification_report(y_test, y_pred)
+
+
+#this is done in two for loops, irespective of number of params
+#for exmple if there are total 4 params list then it will return all combination in 2 loops
+def get_list_of_param_comination(list_of_param, param_names):
+    list_of_param_comination = []
+    for each in list(product(*list_of_param)):
+        comb = {}
+        for i in range(len(list_of_param)):
+            comb[param_names[i]] = each[i]
+        list_of_param_comination.append(comb)
+
+    return list_of_param_comination
+
+## hparams tuning function as per assignment 3
+def tune_hparams(X_train, y_train, X_dev, y_dev, list_of_all_param_combination):
+    best_accuracy = -1
+    for hparams in list_of_all_param_combination:
+        print(f"trainin svm for {hparams}")
+        model = train_model(X_train=X_train, y_train=y_train, model_params=hparams, model_type='svm')
+        val_accuracy, _ = predict_and_eval(model, X_dev, y_dev)
+        print('validation accuracy :  ', val_accuracy)
+        if val_accuracy > best_accuracy:
+            best_hparams = hparams
+            best_model = model
+            best_accuracy = val_accuracy
+    return best_hparams, best_model, best_accuracy
