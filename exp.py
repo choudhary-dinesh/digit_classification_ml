@@ -13,6 +13,9 @@ from utils import get_list_of_param_comination, tune_hparams
 ###########################################################################################
 #1.get/load the dataset
 X,y = load_dataset()
+###for quiz1 
+print("total no of images in datasat",y.shape[0])
+print("size of each image in datasat ", X[0].shape)
 
 #2.Sanity check of data
 
