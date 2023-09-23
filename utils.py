@@ -3,6 +3,8 @@ from sklearn.model_selection import train_test_split
 from sklearn import datasets, svm, metrics
 import matplotlib.pyplot as plt
 from itertools import product
+from skimage.transform import resize
+import numpy as np
 
 #load dataset from sklearn
 def load_dataset():
@@ -82,3 +84,14 @@ def tune_hparams(X_train, y_train, X_dev, y_dev, list_of_all_param_combination):
             best_model = model
             best_accuracy = val_accuracy
     return best_hparams, best_model, best_accuracy
+
+
+
+
+
+def image_resize_fn(img_list, img_size):
+    image_resized = []
+    for each_img in img_list:
+        image_resized.append(resize(each_img, img_size,anti_aliasing=True))
+
+    return np.array(image_resized)

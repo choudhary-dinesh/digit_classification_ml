@@ -27,3 +27,4 @@ def test_data_splitting():
     train_size = 1 - test_size - dev_size
     X_train, y_train, X_test, y_test, X_dev, y_dev = split_train_dev_test(X, y, test_size, dev_size)
     assert (X_train.shape[0] == int(train_size*X.shape[0]))  and ( X_test.shape[0] == int(test_size*X.shape[0])) and ( X_dev.shape[0] == int(dev_size*X.shape[0]))
+

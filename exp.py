@@ -6,7 +6,7 @@ digit classification model code for mlops
 
 #utils import
 from utils import load_dataset, data_preprocessing, split_train_dev_test,predict_and_eval
-from utils import get_list_of_param_comination, tune_hparams
+from utils import get_list_of_param_comination, tune_hparams,image_resize_fn
  
 
 
@@ -14,26 +14,31 @@ from utils import get_list_of_param_comination, tune_hparams
 #1.get/load the dataset
 X,y = load_dataset()
 ###for quiz1 
-print("total no of images in datasat",y.shape[0])
-print("size of each image in datasat ", X[0].shape)
+# print("total no of images in datasat",y.shape[0])
+# print("size of each image in datasat ", X[0].shape)
 
 #2.Sanity check of data
 
 ################################################################################################
 #taking different combinations of train dev and test and reporting results
 #3. Spliting the data
-test_size =  [0.1, 0.2, 0.3]
-dev_size = [0.1, 0.2, 0.3]
-for ts in test_size:
-    for ds in dev_size:
-        X_train, y_train, X_test, y_test, X_dev, y_dev = split_train_dev_test(X, y, test_size=ts, dev_size=ds)  
-
+test_size =  0.2
+dev_size = 0.1
+img_sizes = [(4,4), (6,6), (8,8)]
+X_train, y_train, X_test, y_test, X_dev, y_dev = split_train_dev_test(X, y, test_size=test_size, dev_size=dev_size)  
+for i_size in img_sizes:
 
         #################################################################################################
+        ##rescaling images
+        X_train = image_resize_fn(list(X_train),i_size)
+        X_test= image_resize_fn(list(X_test),i_size)
+        X_dev =image_resize_fn(list(X_dev),i_size)
+        # print(X_train.shape, X_test.shape, X_dev.shape)
         #4. Preprocessing the data
         X_train = data_preprocessing(X_train)
         X_test= data_preprocessing(X_test)
         X_dev =data_preprocessing(X_dev)
+        # print(X_train.shape, X_test.shape, X_dev.shape)
 
                                                                                                                     
         #################################################################################################
@@ -53,5 +58,5 @@ for ts in test_size:
         test_accuracy, _ = predict_and_eval(best_model, X_test, y_test)
 
         #print for github actions
-        print('test_size=',ts,' dev_size=',ds,' train_size=',round(1-ts-ds,2),' train_acc=',train_accuracy,' dev_acc',best_val_accuracy,' test_acc=',test_accuracy, ' best_hyper_params=', best_hparams)
+        print('img_size',i_size,'test_size=',0.2,' dev_size=',0.1,' train_size=',0.7,' train_acc=',train_accuracy,' dev_acc',best_val_accuracy,' test_acc=',test_accuracy, ' best_hyper_params=', best_hparams)
        
