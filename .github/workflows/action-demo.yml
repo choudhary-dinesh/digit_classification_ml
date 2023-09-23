@@ -22,5 +22,6 @@ jobs:
         run:  pip3 install --no-cache-dir -r requirements.txt
       - name: Run pytest cases
         run: pytest
+        run: echo " Print statement for quiz 1"
       - name: Run experiment
         run: python exp.py
