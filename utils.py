@@ -1,6 +1,6 @@
 #imports
 from sklearn.model_selection import train_test_split
-from sklearn import datasets, svm, metrics
+from sklearn import datasets, svm, metrics, tree
 import matplotlib.pyplot as plt
 from itertools import product
 
@@ -31,9 +31,11 @@ def split_train_dev_test(X, y, test_size, dev_size):
 
 
 #model training
-def train_model(X_train, y_train, model_params, model_type = 'svm'):
+def train_model(X_train, y_train, model_params, model_type):
     if model_type == 'svm':
         clf = svm.SVC
+    if model_type == 'tree':
+        clf =tree.DecisionTreeClassifier
     model = clf(**model_params)
     model.fit(X_train, y_train)
     return model
@@ -72,10 +74,10 @@ def get_list_of_param_comination(list_of_param, param_names):
 
 
 ## hparams tuning function as per assignment 3
-def tune_hparams(X_train, y_train, X_dev, y_dev, list_of_all_param_combination):
+def tune_hparams(X_train, y_train, X_dev, y_dev, list_of_all_param_combination, model_type):
     best_accuracy = -1
     for hparams in list_of_all_param_combination:
-        model = train_model(X_train=X_train, y_train=y_train, model_params=hparams, model_type='svm')
+        model = train_model(X_train=X_train, y_train=y_train, model_params=hparams, model_type=model_type)
         val_accuracy, _ = predict_and_eval(model, X_dev, y_dev)
         if val_accuracy > best_accuracy:
             best_hparams = hparams
