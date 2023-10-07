@@ -24,4 +24,4 @@ jobs:
       - name: Run pytest cases
         run: pytest
       - name: Run experiment
-        run: python exp.py
+        run: python exp.py 2 0.2 0.2 'svm'
