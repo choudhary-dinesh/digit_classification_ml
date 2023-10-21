@@ -3,6 +3,8 @@ from sklearn.model_selection import train_test_split
 from sklearn import datasets, svm, metrics, tree
 import matplotlib.pyplot as plt
 from itertools import product
+from joblib import dump, load
+
 
 #load dataset from sklearn
 def load_dataset():
@@ -38,6 +40,7 @@ def train_model(X_train, y_train, model_params, model_type):
         clf =tree.DecisionTreeClassifier
     model = clf(**model_params)
     model.fit(X_train, y_train)
+    # dump(model, 'production_model.joblib') 
     return model
 
 #prediction and accuracy evaluation
