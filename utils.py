@@ -40,7 +40,9 @@ def train_model(X_train, y_train, model_params, model_type):
         clf =tree.DecisionTreeClassifier
     model = clf(**model_params)
     model.fit(X_train, y_train)
-    # dump(model, 'production_model.joblib') 
+    tmp = '_'.join([f"{k}:{v}"for k,v in model_params.items()])
+    model_path = f"models/{model_type}_{tmp}.joblib"
+    dump(model, model_path) 
     return model
 
 #prediction and accuracy evaluation
@@ -49,19 +51,6 @@ def predict_and_eval(model, X_test, y_test):
     accuracy = metrics.accuracy_score(y_test, predicted) * 100
     return accuracy, predicted
 
-
-#Visualize first n sample and show their prediction
-# def visualize_first_n_sample_prediction(X_test, y_pred, n = 4):
-#     _, axes = plt.subplots(nrows=1, ncols=n, figsize=(10, 3))
-#     for ax, image, prediction in zip(axes, X_test, y_pred):
-#         ax.set_axis_off()
-#         image = image.reshape(8, 8)
-#         ax.imshow(image, cmap=plt.cm.gray_r, interpolation="nearest")
-#         ax.set_title(f"Prediction: {prediction}")
-
-#return classification report
-# def get_classification_report(y_test, y_pred):
-#     return metrics.classification_report(y_test, y_pred)
 
 
 #this is done in two for loops, irespective of number of params
