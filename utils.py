@@ -42,7 +42,10 @@ def train_model(X_train, y_train, model_params, model_type):
     model.fit(X_train, y_train)
     tmp = '_'.join([f"{k}:{v}"for k,v in model_params.items()])
     model_path = f"models/{model_type}_{tmp}.joblib"
-    dump(model, model_path) 
+    try:
+        dump(model, model_path)
+    except Exception as e:
+        print(str(e))
     return model
 
 #prediction and accuracy evaluation
