@@ -22,6 +22,6 @@ jobs:
         run:  pip3 install --no-cache-dir -r requirements.txt
       - name: Run pytest cases
         run: pytest
-      - name: Run script for docker images build and run
-      -run: ./docker_run.sh
+      - name: Run bash script to build and run docker image
+        run: ./docker_run.sh
        # run: python exp.py --total_run 1 --dev_size 0.2 --test_size 0.2 --model_type 'svm'
