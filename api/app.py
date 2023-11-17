@@ -1,4 +1,5 @@
 from flask import Flask,request
+
 import numpy as np
 from joblib import  load
 
@@ -22,6 +23,7 @@ def sum_two_numbers(x,y):
 @app.route("/predict", methods = ['POST'])
 def predict_fn():
     input_data = request.get_json()
+
     img = input_data['image']
 
     img = list(map(float, img))
