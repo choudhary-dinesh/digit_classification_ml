@@ -1,11 +1,13 @@
 from flask import Flask,request
-from joblib import  load
+
 import numpy as np
+from joblib import  load
+
 app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return "<p>This is home page for flask app to serve model on azure cloud</p>"
 
 @app.route('/user/<username>')
 def profile(username):
@@ -21,24 +23,20 @@ def sum_two_numbers(x,y):
 @app.route("/predict", methods = ['POST'])
 def predict_fn():
     input_data = request.get_json()
-    img1 = input_data['img1']
-    img2 = input_data['img2']
 
-    img1 = list(map(float, img1))
-    img2 = list(map(float, img2))
+    img = input_data['image']
 
-    img1 = np.array(img1).reshape(1,-1)
-    img2 = np.array(img2).reshape(1,-1)
+    img = list(map(float, img))
 
-    model = load("models/svm_gamma:0.01_C:0.1.joblib")
-    predicted1 = model.predict(img1)
-    predicted2 = model.predict(img2)
-    if predicted1[0] == predicted2[0]:
-        print("Both images are of same digit")
-        return "True"
-    else:
-        print("Both images are not of same digit")
-        return "False"
+    img = np.array(img).reshape(1,-1)
+
+    model = load("svm_model.joblib")
+    predicted = model.predict(img)
+    return f"Prediction : uploaded images belongs to number {predicted[0]} category"
+
+
+if __name__ == '__main__':
+    app.run(host = '0.0.0.0', port = 80)
+
+
     
-    # return f"{predicted1}, {predicted2}"
-
