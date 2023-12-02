@@ -1,0 +1,10 @@
+# FROM ubuntu:22.04
+FROM dependecyimage:v1
+# copy code folder
+COPY . /digits/
+
+#set work dir
+WORKDIR /digits
+
+#run pytest 
+CMD ["pytest"]

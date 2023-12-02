@@ -6,7 +6,7 @@ COPY . /digits/
 # RUN apt-get update
 # RUN apt-get install -y python3 python3-pip
 RUN pip3 install --no-cache-dir -r /digits/requirements.txt
-#set work dir
+
 
 #create volume to mount it on host
 # VOLUME /digits/models
