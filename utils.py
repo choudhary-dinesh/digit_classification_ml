@@ -4,6 +4,8 @@ from sklearn import datasets, svm, metrics, tree
 import matplotlib.pyplot as plt
 from itertools import product
 from joblib import dump, load
+from sklearn.preprocessing import normalize
+from sklearn.linear_model import LogisticRegression
 
 
 #load dataset from sklearn
@@ -19,6 +21,12 @@ def data_preprocessing(data):
     n_samples = len(data)
     data = data.reshape((n_samples, -1))
     return data
+
+###final exam q1 unit normalizing data.
+def unit_normalizing(data):
+    # print("unit normalizing ..")
+    return normalize(data)
+
 
 #spliting data 
 # def train_test_spliting(X,y):
@@ -38,10 +46,12 @@ def train_model(X_train, y_train, model_params, model_type):
         clf = svm.SVC
     if model_type == 'tree':
         clf =tree.DecisionTreeClassifier
+    if model_type == 'LR':
+        clf =LogisticRegression
     model = clf(**model_params)
     model.fit(X_train, y_train)
-    tmp = '_'.join([f"{k}:{v}"for k,v in model_params.items()])
-    model_path = f"models/{model_type}_{tmp}.joblib"
+    tmp = '_'.join([f"{k}_{v}"for k,v in model_params.items()])
+    model_path = f"models/M22AIE227_{model_type}_{tmp}.joblib"
     try:
         dump(model, model_path)
     except Exception as e:

@@ -5,9 +5,9 @@ digit classification model code for mlops
 """
 
 #utils import
-from utils import load_dataset, data_preprocessing, split_train_dev_test,predict_and_eval
+from utils import load_dataset, data_preprocessing, split_train_dev_test,predict_and_eval, unit_normalizing
 from utils import get_list_of_param_comination, tune_hparams
-# import pandas as pd 
+import pandas as pd 
 import sys
 from joblib import  load
 import argparse
@@ -51,6 +51,13 @@ for run_num in range(args.total_run):
             X_dev =data_preprocessing(X_dev)
 
             #################################################################################################
+            #4.1 Unit normalizing the data for final exa,
+            X_train = unit_normalizing(X_train)
+            X_test= unit_normalizing(X_test)
+            X_dev =unit_normalizing(X_dev)
+
+
+            #################################################################################################
             #5. Classification model training
             #5.1 SVM
             #hyper parameter tuning for gamma and C
@@ -91,6 +98,37 @@ for run_num in range(args.total_run):
                 print('tree model ','test_size=',ts,' dev_size=',ds,' train_size=',round(1-ts-ds,2),' test_acc=',test_accuracy, ' best_hyper_params=', best_hparams)
                 results.append({'run_num':run_num,'model_type':args.model_type, 'train_accuracy':train_accuracy, 'val_accuracy':best_val_accuracy,
                                 'test_acc':test_accuracy, 'best_hparams':best_hparams})
+                
+            #5.3 Logistic Regression.
+            #hyper parameter tunning
+            if args.model_type == 'LR':
+                solver = ['lbfgs', 'liblinear', 'newton-cg', 'newton-cholesky', 'sag', 'saga']
+                list_of_param_comination = get_list_of_param_comination([solver],  ['solver'])
+                best_hparams, best_model, best_val_accuracy = tune_hparams(X_train, y_train, X_dev, y_dev, list_of_param_comination,model_type = args.model_type)
+
+                #get training accuracy of this best model:
+                train_accuracy, candidate_pred = predict_and_eval(best_model, X_train, y_train)
+
+                ##print performance of each model
+                lr_model_result = []
+                for each_model in solver:
+                    lr_model_path = f"models/M22AIE227_LR_solver_{each_model}.joblib"
+                    lr_model = load(lr_model_path)
+                    test_accuracy, candidate_pred = predict_and_eval(lr_model,  X_test, y_test)
+                    print(f'lr_{each_model}_model ','test_size=',ts,' dev_size=',ds,' train_size=',round(1-ts-ds,2),', test_acc=',test_accuracy)
+                    lr_model_result.append({"model": lr_model_path,'run_num':run_num, "test_accuracy": test_accuracy})
+
+                ################################################################################################
+                #6. Prediction and evaluation on test sat
+                # test accuracy
+                test_accuracy, candidate_pred= predict_and_eval(best_model, X_test, y_test)
+
+                #print for github actions
+                print('best LR model ','test_size=',ts,' dev_size=',ds,' train_size=',round(1-ts-ds,2),' test_acc=',test_accuracy, ' best_hyper_params=', best_hparams)
+                # results.append({'run_num':run_num,'model_type':args.model_type, 'train_accuracy':train_accuracy, 'val_accuracy':best_val_accuracy,
+                #                 'test_acc':test_accuracy, 'best_hparams':best_hparams})
+
+
             if args.prod_model_path is not None:
                 prod_model = load(args.prod_model_path)
                 prod_test_accuracy, prodmodel_pred = predict_and_eval(prod_model, X_test, y_test)
@@ -98,5 +136,6 @@ for run_num in range(args.total_run):
 
 
 
-# result_df = pd.DataFrame(results)
-# print(result_df.groupby('model_type').describe().T)
+# result_df = pd.DataFrame(lr_model_result)
+# import pdb; pdb.set_trace()
+# print(result_df.groupby('model').describe().T)
