@@ -6,7 +6,7 @@ digit classification model code for mlops
 
 #utils import
 from utils import load_dataset, data_preprocessing, split_train_dev_test,predict_and_eval, unit_normalizing
-from utils import get_list_of_param_comination, tune_hparams
+from utils import get_list_of_param_comination, tune_hparams, get_loaded_model_params
 import pandas as pd 
 import sys
 from joblib import  load
@@ -127,6 +127,9 @@ for run_num in range(args.total_run):
                 print('best LR model ','test_size=',ts,' dev_size=',ds,' train_size=',round(1-ts-ds,2),' test_acc=',test_accuracy, ' best_hyper_params=', best_hparams)
                 # results.append({'run_num':run_num,'model_type':args.model_type, 'train_accuracy':train_accuracy, 'val_accuracy':best_val_accuracy,
                 #                 'test_acc':test_accuracy, 'best_hparams':best_hparams})
+
+                ###print model parameters:
+                get_loaded_model_params()
 
 
             if args.prod_model_path is not None:
